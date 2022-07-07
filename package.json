@@ -1,0 +1,32 @@
+{
+  "name": "oneroute-whatsapp",
+  "version": "1.0.0",
+  "description": "OneRoute Backend Coding Assignment",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChibuezePaul/oneroute-whatsapp.git"
+  },
+  "author": "ChibuezePaul",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChibuezePaul/oneroute-whatsapp/issues"
+  },
+  "homepage": "https://github.com/ChibuezePaul/oneroute-whatsapp#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "redis": "^4.2.0",
+    "winston": "^3.8.1",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
