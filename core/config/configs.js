@@ -7,5 +7,6 @@ module.exports = {
   SANDBOX_BASE_URL: process.env.SANDBOX_BASE_URL,
   SANDBOX_API_KEY: process.env.SANDBOX_API_KEY,
   REDIS_PORT: process.env.REDIS_PORT,
-  REDIS_URL: process.env.REDIS_URL
+  REDIS_URL: process.env.REDIS_URL,
+  AUTH_KEY: process.env.AUTH_KEY,
 };

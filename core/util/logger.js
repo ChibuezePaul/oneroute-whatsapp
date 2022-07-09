@@ -31,4 +31,4 @@ logger.configure({
   ]
 });
 
-module.exports = { logger };
+module.exports = logger;
