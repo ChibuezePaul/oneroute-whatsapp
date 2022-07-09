@@ -1,7 +1,22 @@
 const Sequelize = require("sequelize");
-let { DATABASE_URL } = require("../config/configs");
+let { DATABASE_URL, NODE_ENV } = require("../config/configs");
 const logger = require("../util/logger");
-const db = new Sequelize(DATABASE_URL, { dialectOptions: {}});
+const getConnectionOptions = () => {
+    if(NODE_ENV !== 'dev') {
+        return {
+            ssl: true,
+            dialectOptions: {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            }
+        }
+    }
+    return {};
+}
+
+const db = new Sequelize(DATABASE_URL, getConnectionOptions());
 
 db.authenticate()
   .then(() => logger.info("Connection has been established successfully."))
