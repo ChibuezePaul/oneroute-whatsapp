@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
-let { DB_URI } = require("../config/configs");
+let { DATABASE_URL } = require("../config/configs");
 const logger = require("../util/logger");
+const db = new Sequelize(DATABASE_URL);
 
-const db = new Sequelize(DB_URI);
 db.authenticate()
   .then(() => logger.info("Connection has been established successfully."))
   .catch((error) => logger.error(`Unable to connect to the database: ${error}`, 500));
