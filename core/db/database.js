@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 let { DATABASE_URL } = require("../config/configs");
 const logger = require("../util/logger");
-const db = new Sequelize(DATABASE_URL);
+const db = new Sequelize(DATABASE_URL, { dialectOptions: {}});
 
 db.authenticate()
   .then(() => logger.info("Connection has been established successfully."))
