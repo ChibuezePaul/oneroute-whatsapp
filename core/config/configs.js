@@ -9,4 +9,5 @@ module.exports = {
   REDIS_PORT: process.env.REDIS_PORT,
   REDIS_URL: process.env.REDIS_URL,
   AUTH_KEY: process.env.AUTH_KEY,
+  SANDBOX_NUMBER: process.env.SANDBOX_NUMBER,
 };
