@@ -1,8 +1,8 @@
 const redis = require('redis');
-const {REDIS_URL, REDIS_TIMEOUT, CONNECTION_TIMEOUT} = require('../core/config/configs');
+const {REDIS_TLS_URL, REDIS_URL, REDIS_TIMEOUT, CONNECTION_TIMEOUT} = require('../core/config/configs');
 const logger = require('../core/util/logger');
 
-const redisClient = redis.createClient(REDIS_URL, {connect_timeout: CONNECTION_TIMEOUT});
+const redisClient = redis.createClient(REDIS_TLS_URL || REDIS_URL, {connect_timeout: CONNECTION_TIMEOUT});
 redisClient.connect()
     .then(() => logger.info("Redis connected successfully"))
     .catch(error => logger.error("Error connecting to redis", error));

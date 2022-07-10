@@ -21,7 +21,7 @@ const getConnectionOptions = () => {
 const db = new Sequelize(DATABASE_URL, getConnectionOptions());
 
 db.authenticate()
-    .then(() => logger.info("Connection has been established successfully."))
+    .then(() => logger.info("Database Connection has been established successfully."))
     .catch((error) => logger.error(`Unable to connect to the database: ${error}`));
 
 db.sync()
