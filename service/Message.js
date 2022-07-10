@@ -39,7 +39,7 @@ class Message {
             recipientNumber,
             message
         );
-        this.data = {from: SANDBOX_NUMBER, text: {body: message}, type: "SENT_MESSAGE"};
+        this.data = {from: SANDBOX_NUMBER, text: message, type: "SENT_MESSAGE"};
         await this.saveMessage();
         logger.info("send message response===>" + JSON.stringify(messageResponse));
         return "Whatsapp Message Sent Successfully";
@@ -48,17 +48,13 @@ class Message {
     async sendTemplateMessage() {
         const {recipientNumber} = this.data;
         if (!recipientNumber || recipientNumber === "") {
-            this.errors.push("recipientNumber is required");
-        }
-
-        if (this.errors.length) {
-            throwError(this.errors);
+            throwError("recipientNumber is required");
         }
 
         const messageResponse = await sandBoxClient.sendTemplateMessage(recipientNumber);
-        this.data = {from: SANDBOX_NUMBER, text: {body: messageResponse.messages[0].id}, type: "TEMPLATE_MESSAGE"};
+        this.data = {from: SANDBOX_NUMBER, text: messageResponse.messages[0].id, type: "TEMPLATE_MESSAGE"};
         await this.saveMessage();
-        return "Whatsapp Message Template Sent Successfully";
+        return "Whatsapp Template Message Sent Successfully";
     }
 
     async saveMessage() {
@@ -66,7 +62,7 @@ class Message {
 
         return await MessageSchema.create({
             sender: from,
-            message: text.body,
+            message: text,
             type: type
         });
     }

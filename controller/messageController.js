@@ -14,11 +14,16 @@ exports.initMessageConnection = async (req, res) => {
 
 exports.receiveMessage = async (req, res) => {
     try {
-        const messages = req.body;
-        // messages[0].type = 'RECEIVED_MESSAGE';
-        logger.info(`=== webhooks received ==== ${JSON.stringify(messages)}`);
-        // const receivedMessage = await new Message(messages[0]).saveMessage();
-        return success(res, "receivedMessage", "Whatsapp Saved Successfully");
+        logger.info(`=== webhooks received ==== ${JSON.stringify(req.body)}`);
+        const messages = req.body.messages;
+        if(messages) {
+            const text = messages[0].text.body;
+            const from = messages[0].from;
+            const type = 'RECEIVED_MESSAGE';
+            logger.info(`=== webhooks received ==== ${JSON.stringify({from, text, type})}`);
+            const receivedMessage = await new Message({from, text, type}).saveMessage();
+        }
+        return success(res, "receivedMessage", "Whatsapp Message Saved Successfully");
     } catch (err) {
         logger.error("Error occurred processing message", err);
         return error(res, {code: err.code, message: err.message});
@@ -40,7 +45,7 @@ exports.sendTemplateMessage = async (req, res) => {
         const initDetails = await new Message(req.body).sendTemplateMessage();
         return success(res, initDetails);
     } catch (err) {
-        logger.error("Error occurred sending message", err);
+        logger.error("Error occurred sending template message", err);
         return error(res, {code: err.code, message: err.message});
     }
 };

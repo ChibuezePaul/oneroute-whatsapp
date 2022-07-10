@@ -48,7 +48,7 @@ exports.sendMessage = async (recipientNumber, message) => {
     }
 };
 
-exports.sendTemplateMessage = async (recipientNumber, message) => {
+exports.sendTemplateMessage = async (recipientNumber) => {
     try {
         const payload = {
             to: recipientNumber,
