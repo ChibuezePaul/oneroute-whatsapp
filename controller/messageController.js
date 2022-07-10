@@ -21,9 +21,9 @@ exports.receiveMessage = async (req, res) => {
             const from = messages[0].from;
             const type = 'RECEIVED_MESSAGE';
             logger.info(`=== webhooks received ==== ${JSON.stringify({from, text, type})}`);
-            const receivedMessage = await new Message({from, text, type}).saveMessage();
+            await new Message({from, text, type}).saveMessage();
         }
-        return success(res, "receivedMessage", "Whatsapp Message Saved Successfully");
+        return success(res, "Whatsapp Message Saved Successfully");
     } catch (err) {
         logger.error("Error occurred processing message", err);
         return error(res, {code: err.code, message: err.message});

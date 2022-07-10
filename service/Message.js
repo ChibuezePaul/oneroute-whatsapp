@@ -1,3 +1,4 @@
+const redis = require("../service/Redis");
 const MessageSchema = require("../model/Message");
 const sandBoxClient = require("../integration/sandBoxClient");
 const throwError = require("../core/util/errorHandler");
@@ -60,15 +61,23 @@ class Message {
     async saveMessage() {
         const {from, text, type} = this.data;
 
-        return await MessageSchema.create({
+        const savedMessage = await MessageSchema.create({
             sender: from,
             message: text,
             type: type
         });
+        redis.deleteCachedData("messages");
+        return savedMessage;
     }
 
     static async findAllMessage() {
-        return await MessageSchema.findAll();
+        const cachedData = await redis.getCachedData("messages");
+        if(cachedData){
+            return JSON.parse(cachedData);
+        }
+        const messages = await MessageSchema.findAll();
+        redis.cacheData("messages", JSON.stringify(messages));
+        return messages;
     }
 }
 
