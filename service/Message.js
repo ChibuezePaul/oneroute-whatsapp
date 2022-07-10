@@ -5,100 +5,75 @@ const logger = require("../core/util/logger");
 const {SANDBOX_NUMBER} = require("../core/config/configs");
 
 class Message {
-  constructor(data) {
-    this.data = data;
-    this.errors = [];
-  }
-
-  async initWhatsappConnection() {
-    if (!this.data) {
-      throwError("url is required");
-    }
-    const webhookUrl = await sandBoxClient.initializeConnection(this.data);
-    return {
-      message: "Whatsapp Connection Initialized Successfully",
-      connectionUrl: webhookUrl,
-    };
-  }
-
-  async sendMessage() {
-    const { recipientNumber, message } = this.data;
-    if (!recipientNumber || recipientNumber === "") {
-      this.errors.push("recipientNumber is required");
+    constructor(data) {
+        this.data = data;
+        this.errors = [];
     }
 
-    if (!message || message === "") {
-      this.errors.push("message is required");
+    async initWhatsappConnection() {
+        if (!this.data) {
+            throwError("url is required");
+        }
+        const webhookUrl = await sandBoxClient.initializeConnection(this.data);
+        return {
+            message: "Whatsapp Connection Initialized Successfully",
+            connectionUrl: webhookUrl,
+        };
     }
 
-    if (this.errors.length) {
-      throwError(this.errors);
+    async sendMessage() {
+        const {recipientNumber, message} = this.data;
+        if (!recipientNumber || recipientNumber === "") {
+            this.errors.push("recipientNumber is required");
+        }
+
+        if (!message || message === "") {
+            this.errors.push("message is required");
+        }
+
+        if (this.errors.length) {
+            throwError(this.errors);
+        }
+
+        const messageResponse = await sandBoxClient.sendMessage(
+            recipientNumber,
+            message
+        );
+        this.data = {from: SANDBOX_NUMBER, text: {body: message}, type: "SENT_MESSAGE"};
+        await this.saveMessage();
+        logger.info("send message response===>" + JSON.stringify(messageResponse));
+        return "Whatsapp Message Sent Successfully";
     }
 
-    const messageResponse = await sandBoxClient.sendMessage(
-      recipientNumber,
-      message
-    );
-    this.data = {from: SANDBOX_NUMBER, text: message, type: "SENT_MESSAGE"};
-    await this.saveMessage();
-    logger.info("send message response===>" + JSON.stringify(messageResponse));
+    async sendTemplateMessage() {
+        const {recipientNumber} = this.data;
+        if (!recipientNumber || recipientNumber === "") {
+            this.errors.push("recipientNumber is required");
+        }
 
-    //     contacts: [ { input: '2348117110843', wa_id: '2348117110843' } ],
-    //         messages: [ { id: 'gBGHI0gRcRCEPwIJFJCZODDgr5o_' } ],
-    //         meta: { api_status: 'stable', version: '2.41.2' }
-    // }
-    return "Whatsapp Message Sent Successfully";
-  }
+        if (this.errors.length) {
+            throwError(this.errors);
+        }
 
-  async sendTemplateMessage() {
-    const { recipientNumber, message } = this.data;
-    if (!recipientNumber || recipientNumber === "") {
-      this.errors.push("recipientNumber is required");
+        const messageResponse = await sandBoxClient.sendTemplateMessage(recipientNumber);
+        this.data = {from: SANDBOX_NUMBER, text: {body: messageResponse.messages[0].id}, type: "TEMPLATE_MESSAGE"};
+        await this.saveMessage();
+        return "Whatsapp Message Template Sent Successfully";
     }
 
-    if (this.errors.length) {
-      throwError(this.errors);
+    async saveMessage() {
+        const {from, text, type} = this.data;
+
+        return await MessageSchema.create({
+            sender: from,
+            message: text.body,
+            type: type
+        });
     }
 
-    const messageResponse = await sandBoxClient.sendTemplateMessage(
-      recipientNumber,
-      message
-    );
-    return "Whatsapp Message Template Sent Successfully";
-  }
-
-  //   {
-  //     "messages": [
-  //         {
-  //             "from": "2348117110843",
-  //             "id": "ABGHI0gRcRCEPwIQ3EF-RubC-re6DWf0_dDPjA",
-  //             "text": {
-  //                 "body": "Bubble blue baby"
-  //             },
-  //             "timestamp": "1657381198",
-  //             "type": "text"
-  //         }
-  //     ],
-  //     "contacts": [
-  //         {
-  //             "profile": {
-  //                 "name": "I"
-  //             },
-  //             "wa_id": "2348117110843"
-  //         }
-  //     ]
-  // }"}
-  async saveMessage() {
-    const { from, text, type } = this.data;
-
-    const message = await MessageSchema.create({
-      sender: from,
-      message: text.body,
-      type: type
-    });
-    logger.info("saved message====>"+message);
-    return message;
-  }
+    static async findAllMessage() {
+        return await MessageSchema.findAll();
+    }
 }
 
 module.exports = Message;
